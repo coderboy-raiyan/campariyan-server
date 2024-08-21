@@ -10,5 +10,10 @@ AuthRoutes.post(
     validateRequest(CustomerValidations.createCustomerValidation),
     CustomerControllers.registerCustomer
 );
+AuthRoutes.post(
+    '/login-customer',
+    validateRequest(CustomerValidations.loginCustomerValidation),
+    CustomerControllers.loginCustomer
+);
 
 export default AuthRoutes;

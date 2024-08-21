@@ -16,7 +16,19 @@ const createCustomerValidation = z.object({
         officeAddress: z.string().optional(),
     }),
 });
+const loginCustomerValidation = z.object({
+    body: z.object({
+        password: z
+            .string()
+            .min(1, { message: 'Must have at least 1 character' })
+            .regex(UserValidations.passwordValidationRegex, {
+                message: 'Your password is not valid',
+            }),
+        email: z.string().email({ message: 'Invalid email address' }),
+    }),
+});
 
 export const CustomerValidations = {
     createCustomerValidation,
+    loginCustomerValidation,
 };

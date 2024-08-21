@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
 import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
@@ -28,10 +29,9 @@ const registerCustomerIntoDB = async (payload: TCustomer & { password: string })
             throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to create user!');
         }
 
-        const createdCustomer = await Customer.create(
-            [{ ...payload, userId: createdUser[0]?._id }],
-            { session }
-        );
+        const createdCustomer = await Customer.create([{ ...payload, user: createdUser[0]?._id }], {
+            session,
+        });
 
         if (!createdCustomer) {
             throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to create customer!');
@@ -64,6 +64,47 @@ const registerCustomerIntoDB = async (payload: TCustomer & { password: string })
     }
 };
 
+const loginCustomerFromDB = async (payload: { email: string; password: string }) => {
+    const customer = await Customer.findOne({ email: payload?.email });
+
+    if (!customer) {
+        throw new AppError(StatusCodes.BAD_REQUEST, 'Email does not exists!');
+    }
+
+    const user = await User.findById(customer?.user).select('+password');
+
+    if (!user) {
+        throw new AppError(StatusCodes.BAD_REQUEST, 'User does not exists!');
+    }
+
+    const verifyPassword = await bcrypt.compare(payload?.password, user?.password);
+
+    if (!verifyPassword) {
+        throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid user password!');
+    }
+
+    const accessToken = generateAccessToken({
+        _id: customer?._id,
+        email: customer?.email,
+        role: user?.role,
+    });
+    const refreshToken = generateRefreshToken({
+        _id: customer?._id,
+        email: customer?.email,
+        role: user?.role,
+    });
+
+    const userData = { ...customer.toObject(), ...user.toObject() };
+    delete userData.password;
+
+    return {
+        customer: userData,
+        accessToken,
+        refreshToken,
+    };
+};
+
 export const CustomerServices = {
     registerCustomerIntoDB,
+    loginCustomerFromDB,
 };
