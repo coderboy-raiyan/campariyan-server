@@ -6,7 +6,7 @@ export type TProduct = {
     price: number;
     stock: number;
     quantity: number;
-    category: Types.ObjectId[] | string[];
+    categories: Types.ObjectId[] | string[];
     isDeleted: boolean;
     ratings: number;
 };

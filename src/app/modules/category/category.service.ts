@@ -67,10 +67,10 @@ const deleteCategoryFromDB = async (id: string) => {
         }
 
         const deletedCategoryFromProduct = await Product.updateMany(
-            { category: category?._id },
+            { categories: category?._id },
             {
                 $pull: {
-                    category: category?._id,
+                    categories: category?._id,
                 },
             },
             { session }
