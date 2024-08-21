@@ -7,5 +7,5 @@ export type TCustomer = {
     phoneNo: string;
     profileImg: string;
     homeAddress: string;
-    officeAddress;
+    officeAddress: string;
 };

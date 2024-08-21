@@ -14,6 +14,7 @@ export default [
             '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
             'no-console': 'warn',
             'no-unused-vars': 'error',
+            '@typescript-eslint/no-explicit-any': 'warn',
         },
     },
     {
