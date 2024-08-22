@@ -16,5 +16,6 @@ ProductRoutes.patch(
     validateRequest(ProductValidations.updateProductValidationSchema),
     ProductControllers.updateProduct
 );
+ProductRoutes.delete('/:id', ProductControllers.deleteProduct);
 
 export default ProductRoutes;

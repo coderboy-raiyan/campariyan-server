@@ -41,6 +41,10 @@ const productSchema = new Schema<TProduct>({
     },
 });
 
+productSchema.pre('find', function () {
+    this.find({ isDeleted: false });
+});
+
 const Product = model<TProduct>('Product', productSchema);
 
 export default Product;

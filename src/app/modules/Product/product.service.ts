@@ -4,7 +4,7 @@ import { TProduct } from './product.interface';
 import Product from './product.model';
 
 const getAllProductsFromDB = async () => {
-    const product = await Product.find({});
+    const product = await Product.find({}).populate('categories');
     return product;
 };
 const createProductIntoDB = async (payload: TProduct) => {
@@ -52,8 +52,14 @@ const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
     return updatedProduct;
 };
 
+const deleteProductFromDB = async (id: string) => {
+    const deletedProduct = await Product.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    return deletedProduct;
+};
+
 export const ProductServices = {
     createProductIntoDB,
     updateProductIntoDB,
     getAllProductsFromDB,
+    deleteProductFromDB,
 };
