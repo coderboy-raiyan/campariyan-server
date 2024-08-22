@@ -5,6 +5,8 @@ import { CategoryValidations } from './category.validation';
 
 const CategoryRoutes = Router();
 
+CategoryRoutes.get('/', CategoryControllers.getAllCategories);
+
 CategoryRoutes.post(
     '/create-category',
     validateRequest(CategoryValidations.createCategoryValidationSchema),

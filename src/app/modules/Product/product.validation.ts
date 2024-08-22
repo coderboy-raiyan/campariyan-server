@@ -9,7 +9,17 @@ const createProductValidationSchema = z.object({
         stock: z.number().min(0),
     }),
 });
+const updateProductValidationSchema = z.object({
+    body: z.object({
+        name: z.string().optional(),
+        price: z.number().min(0).optional(),
+        categories: z.string().or(z.array(z.string())).optional(),
+        quantity: z.number().min(0).optional(),
+        stock: z.number().min(0).optional(),
+    }),
+});
 
 export const ProductValidations = {
     createProductValidationSchema,
+    updateProductValidationSchema,
 };

@@ -6,6 +6,11 @@ import Product from '../Product/product.model';
 import { TCategory } from './category.interface';
 import Category from './category.model';
 
+const getAllCategoriesFromDB = async () => {
+    const result = await Category.find({});
+    return result;
+};
+
 const createCategoryInToDB = async (payload: TCategory) => {
     const slug = slugify(payload.name, {
         lower: true,
@@ -102,4 +107,5 @@ export const CategoryServices = {
     createCategoryInToDB,
     updateCategoryInToDB,
     deleteCategoryFromDB,
+    getAllCategoriesFromDB,
 };
