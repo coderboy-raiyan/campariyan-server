@@ -1,7 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
+import Product from '../Product/product.model';
 import { TReview } from './review.interface';
 import Review from './review.model';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const createReviewIntoDB = async (payload: TReview) => {
     const isReviewExists = await Review.findOne({
@@ -16,9 +20,62 @@ const createReviewIntoDB = async (payload: TReview) => {
         );
     }
 
-    const review = await Review.create(payload);
+    const session = await mongoose.startSession();
 
-    return review;
+    try {
+        session.startTransaction();
+
+        const review = await Review.create([payload], { session });
+
+        const generateRatings = await Review.aggregate(
+            [
+                {
+                    $match: {
+                        product: new ObjectId(payload?.product),
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        ratings: { $avg: '$rating' },
+                        totalRatings: { $sum: 1 },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        ratings: 1,
+                        totalRatings: 1,
+                    },
+                },
+            ],
+            { session }
+        );
+
+        const updateProductRatings = await Product.findByIdAndUpdate(
+            payload?.product,
+            {
+                reviews: {
+                    ratings: generateRatings[0].ratings,
+                    totalRatings: generateRatings[0].totalRatings,
+                },
+            },
+            { session }
+        );
+
+        if (!updateProductRatings) {
+            throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to update review!');
+        }
+
+        await session.commitTransaction();
+        await session.endSession();
+
+        return review[0];
+    } catch (error) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw new Error(error);
+    }
 };
 
 const getAllReviewsFromDB = async () => {
