@@ -7,6 +7,10 @@ export type TProductReviews = {
 
 export type TProduct = {
     name: string;
+    description: string;
+    color?: string;
+    brand: string;
+    returnDays?: number;
     images: {
         secure_url: string;
         public_id: string;

@@ -19,6 +19,22 @@ const productSchema = new Schema<TProduct>(
             type: String,
             required: true,
         },
+        description: {
+            type: String,
+            required: true,
+        },
+        color: {
+            type: String,
+            default: null,
+        },
+        brand: {
+            type: String,
+            required: true,
+        },
+        returnDays: {
+            type: Number,
+            default: null,
+        },
         reviews: {
             type: reviewSchema,
         },

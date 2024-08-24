@@ -6,6 +6,9 @@ const createProductValidationSchema = z.object({
     categories: z.string().or(z.array(z.string())),
     quantity: z.number().min(0),
     stock: z.number().min(0),
+    brand: z.string(),
+    description: z.string(),
+    color: z.string().optional(),
 });
 const updateProductValidationSchema = z.object({
     body: z.object({
