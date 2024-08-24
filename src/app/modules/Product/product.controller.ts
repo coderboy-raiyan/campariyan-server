@@ -13,7 +13,10 @@ const getAllProducts = catchAsync(async (req, res) => {
     });
 });
 const createProduct = catchAsync(async (req, res) => {
-    const result = await ProductServices.createProductIntoDB(req.body);
+    const result = await ProductServices.createProductIntoDB(
+        req.files as Express.Multer.File[],
+        req.body
+    );
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,

@@ -47,8 +47,12 @@ const productSchema = new Schema<TProduct>(
         },
         images: [
             {
-                type: String,
-                required: true,
+                secure_url: {
+                    type: String,
+                },
+                public_id: {
+                    type: String,
+                },
             },
         ],
         isDeleted: {

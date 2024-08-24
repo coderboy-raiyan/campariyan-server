@@ -7,7 +7,10 @@ export type TProductReviews = {
 
 export type TProduct = {
     name: string;
-    images: string[];
+    images: {
+        secure_url: string;
+        public_id: string;
+    }[];
     reviews: TProductReviews;
     price: number;
     stock: number;
