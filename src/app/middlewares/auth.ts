@@ -54,7 +54,7 @@ function auth(...roles: TUserRole[]) {
         if (!roles.includes(role)) {
             throw new AppError(
                 StatusCodes.FORBIDDEN,
-                'You are not authorized to access this content!'
+                'You are not authorized to access this action!'
             );
         }
 

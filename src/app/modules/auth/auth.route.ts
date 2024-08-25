@@ -1,9 +1,11 @@
 import { Router } from 'express';
+import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { AdminControllers } from '../admin/admin.controller';
 import { AdminValidations } from '../admin/admin.validation';
 import { CustomerControllers } from '../customer/customer.controller';
 import { CustomerValidations } from '../customer/customer.validation';
+import { UserConstants } from '../user/user.constant';
 
 const AuthRoutes = Router();
 
@@ -19,6 +21,7 @@ AuthRoutes.post(
 );
 AuthRoutes.post(
     '/register-admin',
+    auth(UserConstants.USER_ROLE.admin, UserConstants.USER_ROLE.superAdmin),
     validateRequest(AdminValidations.createAdminValidationSchema),
     AdminControllers.registerAdmin
 );

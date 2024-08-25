@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
+import { UserConstants } from './user.constant';
 
-export type TUserRole = 'admin' | 'customer';
+export type TUserRole = keyof typeof UserConstants.USER_ROLE;
 
 export type TUser = {
     id: string | Types.ObjectId;
