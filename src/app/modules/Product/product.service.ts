@@ -3,7 +3,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import uploadFileOnCloudinary, { deleteFilesOnCloudinary } from '../../utils/cloudinary';
 import Category from '../category/category.model';
-import { ProductConstants } from './product.constent';
+import { ProductConstants } from './product.constant';
 import { TProduct } from './product.interface';
 import Product from './product.model';
 

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import auth from '../../middlewares/auth';
 import upload from '../../middlewares/multer';
 import validateRequest from '../../middlewares/validateRequest';
 import catchAsync from '../../utils/catchAsync';
@@ -10,6 +11,7 @@ const ProductRoutes = Router();
 ProductRoutes.get('/', ProductControllers.getAllProducts);
 ProductRoutes.post(
     '/create-product',
+    auth('admin'),
     upload.array('files', 5),
     catchAsync(async (req, res, next) => {
         req.body = await ProductValidations.createProductValidationSchema.parseAsync(
@@ -20,9 +22,10 @@ ProductRoutes.post(
 );
 ProductRoutes.patch(
     '/:id',
+    auth('admin'),
     validateRequest(ProductValidations.updateProductValidationSchema),
     ProductControllers.updateProduct
 );
-ProductRoutes.delete('/:id', ProductControllers.deleteProduct);
+ProductRoutes.delete('/:id', auth('admin'), ProductControllers.deleteProduct);
 
 export default ProductRoutes;
