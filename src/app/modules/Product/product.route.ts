@@ -11,7 +11,7 @@ const ProductRoutes = Router();
 ProductRoutes.get('/', ProductControllers.getAllProducts);
 ProductRoutes.post(
     '/create-product',
-    auth('admin'),
+    auth('admin', 'customer'),
     upload.array('files', 5),
     catchAsync(async (req, res, next) => {
         req.body = await ProductValidations.createProductValidationSchema.parseAsync(
@@ -22,10 +22,10 @@ ProductRoutes.post(
 );
 ProductRoutes.patch(
     '/:id',
-    auth('admin'),
+    auth('admin', 'customer'),
     validateRequest(ProductValidations.updateProductValidationSchema),
     ProductControllers.updateProduct
 );
-ProductRoutes.delete('/:id', auth('admin'), ProductControllers.deleteProduct);
+ProductRoutes.delete('/:id', auth('admin', 'customer'), ProductControllers.deleteProduct);
 
 export default ProductRoutes;

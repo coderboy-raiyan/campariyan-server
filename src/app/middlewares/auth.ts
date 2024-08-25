@@ -2,9 +2,11 @@ import { StatusCodes } from 'http-status-codes';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { config } from '../config';
 import AppError from '../errors/AppError';
+import Admin from '../modules/admin/admin.model';
 import Customer from '../modules/customer/customer.model';
 import { UserConstants } from '../modules/user/user.constant';
 import { TUserRole } from '../modules/user/user.interface';
+import User from '../modules/user/user.model';
 import catchAsync from '../utils/catchAsync';
 
 function auth(...roles: TUserRole[]) {
@@ -27,14 +29,26 @@ function auth(...roles: TUserRole[]) {
 
         const { _id, role } = decoded as JwtPayload;
 
-        let user;
+        // Find the user from User table/collection
+        const genericUser = await User.findById(_id, { _id: 1 });
 
-        if (role === UserConstants.USER_ROLE.admin) {
-            user = await Customer.findById(_id).populate('user');
+        if (!genericUser) {
+            throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
         }
 
-        if (!user) {
-            throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
+        // Find the user from specific Role based table/collection
+        let user;
+
+        switch (role) {
+            case UserConstants.USER_ROLE.admin:
+                user = await Admin.findOne({ user: genericUser?._id }, { email: 1 });
+                break;
+            case UserConstants.USER_ROLE.customer:
+                user = await Customer.findOne({ user: genericUser?._id }, { email: 1 });
+                break;
+
+            default:
+                break;
         }
 
         if (!roles.includes(role)) {

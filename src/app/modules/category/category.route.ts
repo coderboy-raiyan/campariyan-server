@@ -10,16 +10,16 @@ CategoryRoutes.get('/', CategoryControllers.getAllCategories);
 
 CategoryRoutes.post(
     '/create-category',
-    auth('admin'),
+    auth('admin', 'customer'),
     validateRequest(CategoryValidations.createCategoryValidationSchema),
     CategoryControllers.createCategory
 );
 CategoryRoutes.patch(
     '/:id',
-    auth('admin'),
+    auth('admin', 'customer'),
     validateRequest(CategoryValidations.updateCategoryValidationSchema),
     CategoryControllers.updateCategory
 );
-CategoryRoutes.delete('/:id', CategoryControllers.deleteCategory);
+CategoryRoutes.delete('/:id', auth('admin', 'customer'), CategoryControllers.deleteCategory);
 
 export default CategoryRoutes;
