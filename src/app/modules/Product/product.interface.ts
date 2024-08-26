@@ -18,7 +18,6 @@ export type TProduct = {
     reviews: TProductReviews;
     price: number;
     stock: number;
-    quantity: number;
     categories: Types.ObjectId[] | string[];
     isDeleted: boolean;
 };
