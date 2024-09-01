@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { TCategory } from '../category/category.interface';
 
 export type TProductReviews = {
     ratings: number;
@@ -18,6 +18,6 @@ export type TProduct = {
     reviews: TProductReviews;
     price: number;
     stock: number;
-    categories: Types.ObjectId[] | string[];
+    categories: TCategory[];
     isDeleted: boolean;
 };

@@ -44,9 +44,14 @@ const productSchema = new Schema<TProduct>(
         },
         categories: [
             {
-                type: Schema.Types.ObjectId,
-                ref: 'Category',
-                required: true,
+                name: {
+                    type: String,
+                    required: true,
+                },
+                slug: {
+                    type: String,
+                    required: true,
+                },
             },
         ],
         stock: {

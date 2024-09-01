@@ -1,7 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
+import slugify from 'slugify';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import uploadFileOnCloudinary, { deleteFilesOnCloudinary } from '../../utils/cloudinary';
+import { TCategory } from '../category/category.interface';
 import Category from '../category/category.model';
 import { ProductConstants } from './product.constant';
 import { TProduct } from './product.interface';
@@ -51,22 +53,40 @@ const getAllProductsFromDB = async (query: Record<string, unknown>) => {
         });
     }
 
-    const product = await productQuery.QueryModel;
+    const product = await productQuery.QueryModel.populate('categories');
 
     return product;
 };
-const createProductIntoDB = async (files: Express.Multer.File[], payload: TProduct) => {
+const createProductIntoDB = async (
+    files: Express.Multer.File[],
+    payload: Omit<TProduct, 'categories'> & { categories: string[] }
+) => {
     try {
         const images = [];
+        const modifiedCategories: TCategory[] = [];
 
         for (const file of files) {
             const url = await uploadFileOnCloudinary(file.path);
             images.push({ secure_url: url?.secure_url, public_id: url?.public_id });
         }
 
+        payload?.categories?.forEach((category) => {
+            const slug = slugify(category, {
+                lower: true,
+                replacement: '-',
+                trim: true,
+            });
+
+            modifiedCategories.push({
+                slug,
+                name: category?.trim(),
+            });
+        });
+
         const product = await Product.create({
             ...payload,
             images,
+            categories: modifiedCategories,
             reviews: {
                 ratings: 0,
                 totalRatings: 0,
@@ -85,32 +105,6 @@ const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
 
     if (!product) {
         throw new AppError(StatusCodes.NOT_FOUND, 'Product not found!');
-    }
-
-    if (categories?.length) {
-        const productCategories = product.categories.map((id) => id.toString());
-        const deleteCategories = productCategories.filter((id) => !categories.includes(id));
-        const newCategories = categories.filter((id) => !productCategories.includes(id));
-
-        await Product.findByIdAndUpdate(
-            id,
-            {
-                $pull: {
-                    categories: { $in: deleteCategories },
-                },
-            },
-            { new: true }
-        );
-
-        await Product.findByIdAndUpdate(
-            id,
-            {
-                $push: {
-                    categories: { $each: newCategories },
-                },
-            },
-            { new: true }
-        );
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(id, restObj, { new: true });
