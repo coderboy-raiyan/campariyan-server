@@ -57,6 +57,12 @@ const getAllProductsFromDB = async (query: Record<string, unknown>) => {
 
     return product;
 };
+
+const getSingleProductFromDB = async (id: string) => {
+    const result = await Product.findById(id);
+    return result;
+};
+
 const createProductIntoDB = async (
     files: Express.Multer.File[],
     payload: Omit<TProduct, 'categories'> & { categories: string[] }
@@ -99,7 +105,7 @@ const createProductIntoDB = async (
 };
 
 const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
-    const { categories, ...restObj } = payload;
+    const { ...restObj } = payload;
 
     const product = await Product.findById(id);
 
@@ -140,4 +146,5 @@ export const ProductServices = {
     updateProductIntoDB,
     getAllProductsFromDB,
     deleteProductFromDB,
+    getSingleProductFromDB,
 };

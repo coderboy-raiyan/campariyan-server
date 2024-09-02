@@ -12,6 +12,15 @@ const getAllProducts = catchAsync(async (req, res) => {
         data: result,
     });
 });
+const getSingleProduct = catchAsync(async (req, res) => {
+    const result = await ProductServices.getSingleProductFromDB(req.params.id);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: 'Product retrieved successfully',
+        data: result,
+    });
+});
 const createProduct = catchAsync(async (req, res) => {
     const result = await ProductServices.createProductIntoDB(
         req.files as Express.Multer.File[],
@@ -48,4 +57,5 @@ export const ProductControllers = {
     updateProduct,
     getAllProducts,
     deleteProduct,
+    getSingleProduct,
 };

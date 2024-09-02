@@ -11,6 +11,7 @@ import { ProductValidations } from './product.validation';
 const ProductRoutes = Router();
 
 ProductRoutes.get('/', ProductControllers.getAllProducts);
+ProductRoutes.get('/:id', ProductControllers.getSingleProduct);
 ProductRoutes.post(
     '/create-product',
     auth(
