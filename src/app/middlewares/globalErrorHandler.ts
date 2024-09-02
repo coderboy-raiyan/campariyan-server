@@ -13,7 +13,7 @@ import handleZodError from '../errors/handleZodError';
 import { TErrorSources } from '../types';
 
 function globalErrorHandler(error: any, req: Request, res: Response, next: NextFunction) {
-    let statusCode: number = StatusCodes.OK;
+    let statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR;
     let message = 'Something went wrong!';
     let errorSources: TErrorSources = [];
 

@@ -12,7 +12,7 @@ function handleZodError(zodError: ZodError): TGenericErrorResponse {
 
     return {
         errorSources,
-        statusCode: StatusCodes.OK,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: 'Validation error',
     };
 }

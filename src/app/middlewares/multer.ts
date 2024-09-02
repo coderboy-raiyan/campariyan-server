@@ -3,8 +3,8 @@ import multer from 'multer';
 import path from 'path';
 import { v6 } from 'uuid';
 
-const UPLOADS_PATH = path.join(process.cwd(), 'uploads');
-const FILE_SIZE = 1024 * 1024 * 1;
+export const UPLOADS_PATH = path.join(process.cwd(), 'uploads');
+export const FILE_SIZE = 1024 * 1024 * 1;
 
 const storage = multer.diskStorage({
     destination(req, file, cb) {

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import fs from 'fs';
 import auth from '../../middlewares/auth';
 import upload from '../../middlewares/multer';
 import validateRequest from '../../middlewares/validateRequest';
@@ -19,11 +20,25 @@ ProductRoutes.post(
     ),
     upload.array('files', 5),
     catchAsync(async (req, res, next) => {
-        req.body = await ProductValidations.createProductValidationSchema.parseAsync(
-            JSON.parse(req.body.data)
-        );
-        return ProductControllers.createProduct(req, res, next);
-    })
+        const { price, stock, ...rest } = JSON.parse(req.body.data);
+        try {
+            req.body = await ProductValidations.createProductValidationSchema.parseAsync({
+                ...rest,
+                price: Number(price),
+                stock: Number(stock),
+            });
+        } catch (error) {
+            for (const file of req.files as Express.Multer.File[]) {
+                fs.unlink(file?.path, (err) => {
+                    next(err);
+                });
+            }
+            next(error);
+        }
+        next();
+    }),
+
+    ProductControllers.createProduct
 );
 ProductRoutes.patch(
     '/:id',
